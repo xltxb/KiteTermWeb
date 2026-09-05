@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KiteTerm — 自用优先的桌面 SSH 终端</title>
+  <meta name="description" content="KiteTerm 是一款 macOS / Windows 桌面 SSH 终端：远程连接、SFTP 传输、密钥管理、端口转发、服务器监控、会话录制、AI 命令协助，以及端到端加密的云同步。Rust 核心，平台零知识。">
+  <meta property="og:title" content="KiteTerm — 自用优先的桌面 SSH 终端">
+  <meta property="og:description" content="远程连接、SFTP、密钥、端口转发、监控、AI 协助与端到端加密云同步，全部装进一个终端。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/img/icon-512.png">
+  <meta name="theme-color" content="#0a0c14">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/img/icon-256.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>
+    // 首屏前恢复主题,避免闪烁
+    (function () {
+      try {
+        var t = localStorage.getItem('kt-theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top" aria-label="KiteTerm 首页">
+      <img src="assets/img/icon-128.png" alt="" width="30" height="30">
+      KiteTerm
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="主导航">
+      <a href="#features">功能</a>
+      <a href="#ai">AI 协助</a>
+      <a href="#security">安全</a>
+      <a href="#architecture">架构</a>
+      <a href="#shortcuts">快捷键</a>
+      <a href="#download">下载</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="切换深浅主题">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      </button>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/xltxb/KiteTerm" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+        <span class="nav-github-text">GitHub</span>
+      </a>
+      <button class="icon-btn nav-toggle" id="navToggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="navLinks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow"><i class="dot"></i> macOS / Windows 桌面端 · v0.1.0 · 源码公开</span>
+      <h1>把整套远程工作台，<br>装进<span class="grad">一个终端</span>。</h1>
+      <p class="hero-lead">
+        KiteTerm 是一款自用优先的桌面 SSH 终端：远程连接、SFTP 传输、密钥管理、端口转发、服务器监控、会话录制与 AI 命令协助，
+        再加一套<strong>端到端加密</strong>的云同步。Rust 核心，本地存储，平台零知识。
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="#download">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M6 11l6 6 6-6M4 21h16"/></svg>
+          获取 KiteTerm
+        </a>
+        <a class="btn btn-ghost btn-lg" href="#features">看看它能做什么</a>
+      </div>
+      <div class="hero-meta">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Tauri 2 + Rust 核心</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>密钥经系统钥匙串加密</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>无 Web 版，无遥测</span>
+      </div>
+    </div>
+
+    <!-- 应用窗口模拟:演示「白话 → AI 命令」 -->
+    <div class="mock" aria-label="KiteTerm 界面演示">
+      <div class="mock-titlebar">
+        <div class="traffic"><i></i><i></i><i></i></div>
+        <div class="mock-tabs">
+          <span class="mock-tab active"><i class="st"></i>prod-api-01</span>
+          <span class="mock-tab"><i class="st"></i>db-primary</span>
+          <span class="mock-tab">＋</span>
+        </div>
+      </div>
+      <div class="mock-body">
+        <div class="mock-side" aria-hidden="true">
+          <span class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 17 6-6-6-6M12 19h8"/></svg></span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="8" rx="2"/><rect x="2" y="13" width="20" height="8" rx="2"/><path d="M6 7h.01M6 17h.01"/></svg></span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21V3M3 7l4-4 4 4M17 3v18M13 17l4 4 4-4"/></svg></span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg></span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m10.85 12.15 8.65-8.65M18 4l2 2M15 7l2 2"/></svg></span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2ZM9 8h6M9 12h6M9 16h4"/></svg></span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 21M3 12a9 9 0 0 1 15.5-6.2L21 3M3 16v5h5M21 8V3h-5"/></svg></span>
+        </div>
+        <div class="mock-term" id="demoTerm">
+          <div class="l"><span class="m">Last login: Fri Sep  5 20:41:07 from 10.0.4.18</span></div>
+          <div class="l"><span class="p">abiu@prod-api-01</span><span class="m">:</span><span class="b">~</span><span class="m">$</span> <span class="h">tail -n 3 /var/log/api/app.log</span></div>
+          <div class="l"><span class="m">20:41:12 INFO  worker#3 handled 1,204 req in 60s (p99 84ms)</span></div>
+          <div class="l"><span class="m">20:41:12 WARN  worker#5 memory 1.9G / 2.0G limit</span></div>
+          <div class="l"><span class="m">20:41:13 INFO  gc pause 12ms</span></div>
+          <div class="l" id="demoLine"><span class="p">abiu@prod-api-01</span><span class="m">:</span><span class="b">~</span><span class="m">$</span> <span id="demoTyped"></span><span class="cursor" aria-hidden="true"></span></div>
+          <div class="ai-card" id="demoAi" aria-live="polite">
+            <div class="ai-head">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>
+              识别为白话，已交给 AI 翻译 · claude-sonnet
+            </div>
+            <code id="demoCmd"></code>
+            <div class="ai-actions"><span class="chip primary">直接运行 ↵</span><span class="chip">填入</span><span class="chip">取消</span></div>
+          </div>
+          <span class="mock-fab" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg></span>
+        </div>
+      </div>
+      <div class="mock-status">
+        <span class="ok">● SSH</span><span>10.0.4.21:22</span><span>23 ms</span><span>chacha20-poly1305@openssh.com</span><span>120×36</span><span class="rec">REC 00:42</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FEATURES ===================== -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">Features · F1–F10</div>
+      <h2>你日常要开五个工具做的事，这里一个窗口搞定。</h2>
+      <p>每一项都不是「计划中」，而是产品需求文档 F1–F10 逐条落地后的现状。</p>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature reveal">
+        <span class="tag">F1</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 17 6-6-6-6M12 19h8"/></svg></div>
+        <h3>终端会话</h3>
+        <p>xterm.js WebGL 渲染，多标签与状态栏（协议 / 地址 / 延迟 / 加密套件 / 尺寸），⌘F 搜索输出，断线指数退避自动重连，多行粘贴护栏。</p>
+      </article>
+      <article class="feature reveal">
+        <span class="tag">F2</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="8" rx="2"/><rect x="2" y="13" width="20" height="8" rx="2"/><path d="M6 7h.01M6 17h.01"/></svg></div>
+        <h3>主机管理</h3>
+        <p>分组 + 标签 + 搜索，一键连接。每 30 秒 TCP 测时实时显示延迟，删除分组时组内主机自动迁移不丢失。</p>
+      </article>
+      <article class="feature reveal">
+        <span class="tag">F3</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21V3M3 7l4-4 4 4M17 3v18M13 17l4 4 4-4"/></svg></div>
+        <h3>SFTP 文件传输</h3>
+        <p>双栏浏览，上传 / 下载队列带进度、速率与失败重试。断点续传前比对两端前 1MB 的 SHA-256，不一致自动从头重传。</p>
+      </article>
+      <article class="feature reveal">
+        <span class="tag">F4</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m10.85 12.15 8.65-8.65M18 4l2 2M15 7l2 2"/></svg></div>
+        <h3>密钥管理</h3>
+        <p>生成 Ed25519 / RSA 4096，导入、指纹、复制公钥、使用统计。私钥经设备密钥加密落库，设备密钥存系统 Keychain。</p>
+      </article>
+      <article class="feature reveal">
+        <span class="tag">F5</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg></div>
+        <h3>端口转发</h3>
+        <p>L 本地 / R 远程 / D 动态 SOCKS5 三类真实转发，实时流量统计，应用启动时自动恢复已启用的规则。</p>
+      </article>
+      <article class="feature reveal">
+        <span class="tag">F6</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2ZM9 8h6M9 12h6M9 16h4"/></svg></div>
+        <h3>命令片段</h3>
+        <p>片段库 + 终端右栏快捷面板一键运行，支持 <code>{{cursor}}</code> 占位符停留待编辑。</p>
+      </article>
+      <article class="feature wide accent reveal">
+        <span class="tag">F7</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 21M3 12a9 9 0 0 1 15.5-6.2L21 3M3 16v5h5M21 8V3h-5"/></svg></div>
+        <h3>端到端加密云同步</h3>
+        <p>oplog 增量同步，逐条 XChaCha20-Poly1305 加密并将对象路径绑定为 AAD；实体级 LWW + lamport 时钟、删除墓碑、每设备游标增量拉取。30 天自动压实为加密快照，新设备秒级引导。管理平台只下发按用户前缀收敛的 STS 临时凭据，桶内只有密文，平台零知识。忘记主密码可凭 24 词 BIP39 恢复短语找回。</p>
+      </article>
+      <article class="feature reveal">
+        <span class="tag">F8</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg></div>
+        <h3>会话录制与回放</h3>
+        <p>asciicast v2 格式录制，状态栏 REC 计时；内建回放器支持播放 / 暂停 / 进度拖动 / 1–4× 倍速。</p>
+      </article>
+      <article class="feature reveal">
+        <span class="tag">F9</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg></div>
+        <h3>命令面板</h3>
+        <p>⌘K 唤起，统一搜索主机、片段与动作，键盘不离手完成一切跳转。</p>
+      </article>
+      <article class="feature reveal">
+        <span class="tag">Monitor</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+        <h3>服务器监控</h3>
+        <p>经 SSH 直接采样 CPU / 内存 / 磁盘 / 负载 / 网络，远端<strong>无需安装 agent</strong>。</p>
+      </article>
+      <article class="feature reveal">
+        <span class="tag">F10</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div>
+        <h3>设置与主题</h3>
+        <p>深 / 浅主题、终端字号、光标闪烁，启动恢复会话、断线自动重连、退出前确认等行为开关，附完整快捷键表。</p>
+      </article>
+      <article class="feature reveal">
+        <span class="tag">Security</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>known_hosts 指纹校验</h3>
+        <p>TOFU 首连记录；指纹变更即刻中断连接并告警，必须显式「信任新指纹」才允许重试。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== AI ===================== -->
+<section class="section section-alt" id="ai">
+  <div class="container split">
+    <div class="reveal">
+      <div class="section-head" style="margin-bottom:0">
+        <div class="kicker">AI Assist</div>
+        <h2>在命令行直接敲白话，回车就变成命令。</h2>
+        <p>识别规则偏保守：首词是已知命令、含管道或选项、路径、环境变量赋值一律按命令原样执行；只有确认不是 shell 命令的句子才交给 AI。生成的命令<strong>必须经你确认</strong>才会写入终端。</p>
+      </div>
+      <ul class="checks">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><div><strong>模型自由选择，多协议并存</strong><span>配置多个模型随时切换，按所选模型的协议请求对应接口。各模型密钥经设备密钥分别加密存本地。</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><div><strong>三个入口，都在终端里</strong><span>右下角常驻 AI 图标（当前行有内容就直接翻译，空行则唤起输入框）；⌘⇧A 主动生成命令；⌘I 让 AI 解释最近输出。</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><div><strong>右栏对话可读会话输出</strong><span>回复中的命令一键「在终端运行」。取消翻译时原文保留，不丢一个字的输入。</span></div></li>
+      </ul>
+      <div class="pills" aria-label="支持的模型协议">
+        <span class="pill"><code>anthropic</code> /v1/messages</span>
+        <span class="pill"><code>openai</code> 兼容 · OpenAI / DeepSeek / OpenRouter / vLLM</span>
+        <span class="pill"><code>ollama</code> 本地 · 无需密钥</span>
+      </div>
+    </div>
+
+    <div class="panel reveal">
+      <div class="panel-head">
+        <span>白话 → 命令 · 完整流程</span>
+        <span class="kbd-row"><span class="kbd">⌘ ⇧ A</span><span class="kbd">⌘ I</span></span>
+      </div>
+      <div class="flow">
+        <div class="flow-step">
+          <span class="n">1</span>
+          <div><strong>直接在命令行输入一句话</strong><p>例如 <code class="inline">找出占用 8080 端口的进程并杀掉</code>，回车。想强制走 AI 可加 <code class="inline">?</code> 前缀。</p></div>
+        </div>
+        <div class="flow-step">
+          <span class="n">2</span>
+          <div><strong>保守规则先判定是否为 shell 命令</strong><p>已知命令 / 管道 / 选项 / 路径 / 变量赋值 → 原样执行；否则交给当前选中的模型。</p></div>
+        </div>
+        <div class="flow-step">
+          <span class="n">3</span>
+          <div><strong>模型返回命令，等待你确认</strong><p>可选「填入」（不回车）或「直接运行」。破坏性命令显著告警：</p>
+            <div class="warn-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>kill -9 $(lsof -t -i:8080) · 会终止进程，请确认</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <span class="n">4</span>
+          <div><strong>采纳则替换该行，取消则原样保留</strong><p>整个功能可在设置中关闭；管理平台也能统一下发「AI 助手」开关。</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECURITY ===================== -->
+<section class="section" id="security">
+  <div class="container split reverse">
+    <div class="sec-grid reveal">
+      <div class="sec-card"><div class="lab">At rest</div><h4>XChaCha20-Poly1305 + Argon2id</h4><p>私钥、AI 密钥、同步数据全部经此加密落库。设备密钥存系统 Keychain，不可用时回退 0600 文件。</p></div>
+      <div class="sec-card"><div class="lab">In transit</div><h4>STS 限权临时凭据</h4><p>平台以 session policy 把权限收敛到 <code>users/{id}/*</code>，1 小时有效。跨前缀访问直接被拒。</p></div>
+      <div class="sec-card"><div class="lab">Zero knowledge</div><h4>主密码只在本地派生密钥</h4><p>桶内仅密文，manifest 以主密钥加密并用 If-Match 乐观锁。平台拿不到任何明文，也不需要。</p></div>
+      <div class="sec-card"><div class="lab">Recovery</div><h4>BIP39 恢复短语</h4><p>24 词即主密钥。忘记主密码时凭短语在任意设备恢复，跨设备一致。</p></div>
+      <div class="sec-card"><div class="lab">Host trust</div><h4>known_hosts TOFU</h4><p>首连记录指纹，之后指纹一变即中断并告警，必须显式信任新指纹才可重试。</p></div>
+      <div class="sec-card"><div class="lab">Migration</div><h4>设备密钥自动迁移</h4><p>历史 <code>device.key</code> 作为解密兜底，存量密文逐条改用当前密钥重加密，全部成功才删旧文件。</p></div>
+    </div>
+    <div class="reveal">
+      <div class="section-head" style="margin-bottom:0">
+        <div class="kicker">Security Model</div>
+        <h2>凭据留在你的设备上，云端只见密文。</h2>
+        <p>KiteTerm 不做「先上传再说」。所有需要出设备的数据都先在本地加密，管理平台的角色只是账户中枢与凭据分发者。没有平台放行，登录和云同步就是用不了，这是服务端硬约束而不是客户端自觉。</p>
+      </div>
+      <ul class="checks">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><div><strong>不需要 KiteTerm 官方服务器</strong><span>管理平台是一个独立的 Rust axum 二进制，配上任意 S3 兼容存储（MinIO 也行）即可自托管。</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><div><strong>不配平台也能完整使用</strong><span>纯本地用户从未连过平台时，四项功能开关默认全开，不会被一套你从未启用的管控挡住。</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><div><strong>登录错误不泄露邮箱是否存在</strong><span>登录开关校验放在口令校验之后；注册按 IP 滑动窗口限流并前置于校验，防止邮箱枚举。</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ARCHITECTURE ===================== -->
+<section class="section section-alt" id="architecture">
+  <div class="container">
+    <div class="section-head center reveal">
+      <div class="kicker">Architecture</div>
+      <h2>两个顶层目录，零代码共享，只靠 HTTP 往来。</h2>
+      <p>桌面端与管理平台各自独立构建、独立部署。你可以只用桌面端，也可以把平台部署在自己的机器上。</p>
+    </div>
+
+    <div class="arch reveal">
+      <div class="arch-box">
+        <span class="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>desktop/</span>
+        <h3>KiteTerm 桌面端</h3>
+        <p>macOS / Windows。SSH、SFTP、密钥、同步能力全部由本地 Rust 核心提供，前端只在 Tauri WebView 内运行，没有 Web 版本。</p>
+        <ul class="stack">
+          <li><span>壳</span><span>Tauri 2</span></li>
+          <li><span>UI</span><span>React 18 · TypeScript · Vite</span></li>
+          <li><span>终端</span><span>xterm.js · WebGL · search / fit</span></li>
+          <li><span>SSH / SFTP</span><span>russh · russh-sftp</span></li>
+          <li><span>存储</span><span>SQLite (rusqlite)</span></li>
+          <li><span>加密</span><span>XChaCha20-Poly1305 · Argon2id</span></li>
+          <li><span>状态 / 样式</span><span>Zustand · Vela Design System</span></li>
+        </ul>
+      </div>
+
+      <div class="arch-link" aria-hidden="true">
+        <div class="line"></div>
+        <span class="bubble">HTTP · /api/*</span>
+        <div class="line"></div>
+      </div>
+
+      <div class="arch-box">
+        <span class="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>server/</span>
+        <h3>管理平台（Web）</h3>
+        <p>账户注册 / 登录、三档注册策略与邀请码、令牌、功能开关下发、同步授权与 S3 凭据下发，并内嵌 Web 管理控制台 <code>/admin</code>。</p>
+        <ul class="stack">
+          <li><span>服务</span><span>Rust · axum</span></li>
+          <li><span>存储</span><span>SQLite</span></li>
+          <li><span>对象存储</span><span>任意 S3 兼容 · STS AssumeRole</span></li>
+          <li><span>注册策略</span><span>open · invite · closed</span></li>
+          <li><span>功能开关</span><span>登录 · 云同步 · AI 助手</span></li>
+          <li><span>控制台</span><span>用户 / 用量 / 强制下线 / 统计</span></li>
+          <li><span>分发</span><span>单二进制 · admin.html 内嵌</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SHORTCUTS ===================== -->
+<section class="section" id="shortcuts">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">Keyboard</div>
+      <h2>键盘不离手。</h2>
+      <p>与应用「设置 → 快捷键」一致。Windows 上 ⌘ 对应 Ctrl。</p>
+    </div>
+    <div class="kb-grid reveal">
+      <div class="kb"><span>命令面板</span><span class="kbd">⌘ K</span></div>
+      <div class="kb"><span>新建标签</span><span class="kbd">⌘ T</span></div>
+      <div class="kb"><span>关闭标签</span><span class="kbd">⌘ W</span></div>
+      <div class="kb"><span>切换标签</span><span class="kbd">⌘ 1–9</span></div>
+      <div class="kb"><span>拆分终端</span><span class="kbd">⌘ D</span></div>
+      <div class="kb"><span>搜索输出</span><span class="kbd">⌘ F</span></div>
+      <div class="kb"><span>上传文件</span><span class="kbd">⌘ U</span></div>
+      <div class="kb"><span>AI 解释最近输出</span><span class="kbd">⌘ I</span></div>
+      <div class="kb"><span>AI 生成命令</span><span class="kbd">⌘ ⇧ A</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DOWNLOAD ===================== -->
+<section class="section section-alt" id="download">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">Download · v0.1.0</div>
+      <h2>获取 KiteTerm</h2>
+      <p>桌面端支持 macOS 与 Windows。预编译安装包随 GitHub Releases 发布；在此之前可按下面的步骤从源码构建。</p>
+    </div>
+
+    <div class="dl-grid reveal">
+      <div class="dl-card">
+        <div class="os">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.76c-.02-2.36 1.93-3.5 2.02-3.55-1.1-1.61-2.81-1.83-3.42-1.86-1.45-.15-2.84.86-3.58.86-.74 0-1.88-.84-3.09-.82-1.59.02-3.06.93-3.88 2.35-1.66 2.87-.42 7.12 1.19 9.45.79 1.14 1.73 2.42 2.96 2.37 1.19-.05 1.64-.77 3.08-.77 1.44 0 1.84.77 3.1.75 1.28-.02 2.09-1.16 2.87-2.31.9-1.32 1.28-2.6 1.3-2.67-.03-.01-2.5-.96-2.55-3.8zM14.02 5.8c.65-.79 1.09-1.89.97-2.98-.94.04-2.07.62-2.75 1.41-.6.7-1.13 1.82-.99 2.89 1.05.08 2.12-.53 2.77-1.32z"/></svg>
+          <div><h3>macOS</h3><div class="fmt">.dmg · .app</div></div>
+        </div>
+        <p>Apple Silicon 与 Intel。首次运行会请求钥匙串授权，用于保存设备密钥。</p>
+        <a class="btn btn-primary" href="https://github.com/xltxb/KiteTerm/releases" target="_blank" rel="noopener">前往 Releases 下载</a>
+      </div>
+      <div class="dl-card">
+        <div class="os">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5 10.5 4.4v7.2H3zm0 13L10.5 19.6v-7.1H3zm8.5-14.2L21 3v8.6h-9.5zm0 8.2H21V21l-9.5-1.3z"/></svg>
+          <div><h3>Windows</h3><div class="fmt">.msi · .exe (NSIS)</div></div>
+        </div>
+        <p>Windows 10 / 11 x64。⌘ 快捷键在 Windows 上对应 Ctrl。</p>
+        <a class="btn btn-primary" href="https://github.com/xltxb/KiteTerm/releases" target="_blank" rel="noopener">前往 Releases 下载</a>
+      </div>
+    </div>
+
+    <div class="notice reveal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <div>截至 2026-09-05，GitHub Releases 页尚未发布预编译安装包。当前版本 v0.1.0 请按下方步骤从源码构建，需要 Node.js（pnpm）与 Rust 工具链。</div>
+    </div>
+
+    <div class="steps">
+      <div class="reveal">
+        <h3>从源码构建桌面端</h3>
+        <p class="sub">在 macOS 上产出 .app / .dmg；在 Windows 上产出 .msi / .nsis，需在对应系统执行。</p>
+        <div class="codeblock">
+          <div class="codeblock-head"><span>shell</span><button class="copy-btn" type="button" data-copy="build-desktop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>复制</button></div>
+<pre id="build-desktop"><span class="k">git</span> clone https://github.com/xltxb/KiteTerm.git
+<span class="k">cd</span> KiteTerm
+<span class="k">pnpm</span> install:desktop          <span class="c"># 等价于 pnpm -C desktop install</span>
+
+<span class="c"># 开发运行(唯一的运行方式;浏览器直接打开只会看到提示页)</span>
+<span class="v">KITE_NO_KEYCHAIN=1</span> <span class="k">pnpm</span> tauri dev
+
+<span class="c"># 打包</span>
+<span class="k">pnpm</span> tauri build</pre>
+        </div>
+      </div>
+      <div class="reveal">
+        <h3>自托管管理平台（可选）</h3>
+        <p class="sub">只有需要账户与云同步时才要它。S3 指向任意兼容存储，例如本地 MinIO。</p>
+        <div class="codeblock">
+          <div class="codeblock-head"><span>shell</span><button class="copy-btn" type="button" data-copy="build-server"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>复制</button></div>
+<pre id="build-server"><span class="v">KITE_ADMIN_KEY</span>=&lt;管理密钥&gt; \
+<span class="v">S3_ENDPOINT</span>=http://127.0.0.1:19000 <span class="v">S3_BUCKET</span>=vela-sync \
+<span class="v">S3_ACCESS_KEY</span>=&lt;ak&gt; <span class="v">S3_SECRET_KEY</span>=&lt;sk&gt; \
+<span class="k">cargo</span> run --manifest-path server/Cargo.toml
+
+<span class="c"># 可选:</span>
+<span class="c">#   KITE_FEATURE_GATING=on|off          功能门禁总闸,默认 off</span>
+<span class="c">#   KITE_REGISTRATION=open|invite|closed 注册策略初值</span>
+<span class="c">#   KITE_REGISTER_LIMIT=5               同一 IP 每小时注册尝试上限</span>
+<span class="c"># 管理控制台:http://127.0.0.1:8787/admin</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-head center reveal">
+      <div class="kicker">FAQ</div>
+      <h2>常见问题</h2>
+    </div>
+    <div class="faq reveal">
+      <details>
+        <summary>有 Web 版或 Linux 版吗？</summary>
+        <div class="a">目前没有 Web 版：SSH / SFTP / 密钥 / 同步能力都由本地 Rust 核心提供，前端只在 Tauri WebView 内运行，用浏览器打开开发服务器只会看到提示页。官方构建目标为 macOS 与 Windows。</div>
+      </details>
+      <details>
+        <summary>云同步必须用官方服务器吗？</summary>
+        <div class="a">不需要。管理平台是仓库 <code>server/</code> 目录里的一个独立 Rust 二进制，配上任意 S3 兼容存储即可自托管。应用内「同步」页默认平台地址为 <code>http://127.0.0.1:8787</code>，可在「设置 → 管理平台」修改。</div>
+      </details>
+      <details>
+        <summary>AI 协助会把我的终端内容发出去吗？</summary>
+        <div class="a">只有你主动触发时才会请求模型：在命令行敲白话回车、点终端右下角 AI 图标、按 ⌘⇧A 或 ⌘I，或在右栏对话中提问。请求直接发往你自己配置的模型接口（Anthropic、OpenAI 兼容或本地 Ollama），密钥经设备密钥加密存本地。整个功能可在设置中一键关闭。</div>
+      </details>
+      <details>
+        <summary>服务器监控需要在远端装 agent 吗？</summary>
+        <div class="a">不需要。监控经 SSH 直接采样。采样命令面向 Linux 远端（读取 /proc），macOS 远端目前显示为离线。</div>
+      </details>
+      <details>
+        <summary>忘记同步主密码怎么办？</summary>
+        <div class="a">启用同步时会生成 24 词 BIP39 恢复短语，它等价于主密钥。凭短语可在任意设备恢复并解密同步数据。主密码仅在本地派生密钥，平台无法帮你重置，请妥善保管短语。</div>
+      </details>
+      <details>
+        <summary>为什么开发时建议加 KITE_NO_KEYCHAIN=1？</summary>
+        <div class="a">每次重新编译都会产生新二进制，系统钥匙串会视其为新程序而反复弹出授权框。该开关让设备密钥走 0600 文件回退。应用启动时会自动做设备密钥迁移，把历史文件密钥加密的数据换用当前密钥，不会出现「解密失败（设备密钥不匹配）」。</div>
+      </details>
+      <details>
+        <summary>项目的许可证是什么？</summary>
+        <div class="a">源码公开在 GitHub 仓库，许可证以仓库内声明为准。</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="cta-band reveal">
+      <h2>一个终端，装下整套远程工作台。</h2>
+      <p>源码公开，本地优先，密文上云。</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="#download">获取 KiteTerm</a>
+        <a class="btn btn-ghost btn-lg" href="https://github.com/xltxb/KiteTerm" target="_blank" rel="noopener">在 GitHub 上查看源码</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="#top"><img src="assets/img/icon-128.png" alt="" width="24" height="24">KiteTerm</a>
+        <p>自用优先的桌面 SSH 终端。远程连接、SFTP、密钥、端口转发、监控、录制、AI 协助与端到端加密云同步。</p>
+      </div>
+      <nav class="footer-links" aria-label="页脚导航">
+        <a href="#features">功能</a>
+        <a href="#ai">AI 协助</a>
+        <a href="#security">安全</a>
+        <a href="#architecture">架构</a>
+        <a href="#download">下载</a>
+        <a href="https://github.com/xltxb/KiteTerm" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/xltxb/KiteTerm/issues" target="_blank" rel="noopener">反馈问题</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year">2026</span> KiteTerm</span>
+      <span>Built with Tauri 2 · React · Rust</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
