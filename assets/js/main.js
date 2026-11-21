@@ -20,15 +20,26 @@
   var navToggle = document.getElementById('navToggle');
   var navLinks = document.getElementById('navLinks');
   if (navToggle && navLinks) {
-    navToggle.addEventListener('click', function () {
-      var open = navLinks.classList.toggle('open');
+    var setMenu = function (open) {
+      navLinks.classList.toggle('open', open);
       navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       navToggle.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+    };
+    navToggle.addEventListener('click', function () {
+      setMenu(!navLinks.classList.contains('open'));
     });
     navLinks.addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') {
-        navLinks.classList.remove('open');
-        navToggle.setAttribute('aria-expanded', 'false');
+      if (e.target.closest && e.target.closest('a')) setMenu(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && navLinks.classList.contains('open')) {
+        setMenu(false);
+        navToggle.focus();
+      }
+    });
+    document.addEventListener('click', function (e) {
+      if (navLinks.classList.contains('open') && !navLinks.contains(e.target) && !navToggle.contains(e.target)) {
+        setMenu(false);
       }
     });
   }
@@ -36,20 +47,25 @@
   /* ---------- 复制代码块 ---------- */
   var copyBtns = document.querySelectorAll('.copy-btn[data-copy]');
   Array.prototype.forEach.call(copyBtns, function (btn) {
+    var label = btn.lastChild;
+    var original = label.textContent;
+    var timer = null;
+    var show = function (ok) {
+      label.textContent = ok ? '已复制' : '复制失败';
+      clearTimeout(timer);
+      timer = setTimeout(function () { label.textContent = original; }, 1600);
+    };
     btn.addEventListener('click', function () {
       var pre = document.getElementById(btn.getAttribute('data-copy'));
       if (!pre) return;
       var text = pre.innerText;
-      var done = function () {
-        var label = btn.lastChild;
-        var prev = label.textContent;
-        label.textContent = '已复制';
-        setTimeout(function () { label.textContent = prev; }, 1600);
-      };
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+        navigator.clipboard.writeText(text).then(
+          function () { show(true); },
+          function () { show(fallbackCopy(text)); }
+        );
       } else {
-        fallbackCopy(text); done();
+        show(fallbackCopy(text));
       }
     });
   });
@@ -58,8 +74,10 @@
     ta.value = text; ta.setAttribute('readonly', '');
     ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); } catch (e) {}
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
     document.body.removeChild(ta);
+    return ok;
   }
 
   /* ---------- 滚动显现 ---------- */

@@ -8,7 +8,9 @@
   <meta property="og:title" content="KiteTerm — 自用优先的桌面 SSH 终端">
   <meta property="og:description" content="远程连接、SFTP、密钥、端口转发、监控、AI 协助与端到端加密云同步，全部装进一个终端。">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/img/icon-512.png">
+  <meta property="og:url" content="https://www.kiteterm.com/">
+  <meta property="og:image" content="https://www.kiteterm.com/assets/img/icon-512.png">
+  <link rel="canonical" href="https://www.kiteterm.com/">
   <meta name="theme-color" content="#0a0c14">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/img/icon-256.png">
@@ -19,11 +21,16 @@
   <script>
     // 首屏前恢复主题,避免闪烁
     (function () {
-      try {
-        var t = localStorage.getItem('kt-theme');
-        if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', t);
-      } catch (e) {}
+      var d = document.documentElement;
+      d.className += ' js';
+      var t = null;
+      try { t = localStorage.getItem('kt-theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      }
+      d.setAttribute('data-theme', t);
+      var m = document.querySelector('meta[name="theme-color"]');
+      if (m) m.setAttribute('content', t === 'dark' ? '#0a0c14' : '#f6f8fb');
     })();
   </script>
 </head>
@@ -88,7 +95,7 @@
     </div>
 
     <!-- 应用窗口模拟:演示「白话 → AI 命令」 -->
-    <div class="mock" aria-label="KiteTerm 界面演示">
+    <div class="mock" role="img" aria-label="KiteTerm 界面演示：在终端里输入一句白话，AI 将其翻译为命令并等待确认">
       <div class="mock-titlebar">
         <div class="traffic"><i></i><i></i><i></i></div>
         <div class="mock-tabs">
@@ -115,7 +122,7 @@
           <div class="l"><span class="m">20:41:12 WARN  worker#5 memory 1.9G / 2.0G limit</span></div>
           <div class="l"><span class="m">20:41:13 INFO  gc pause 12ms</span></div>
           <div class="l" id="demoLine"><span class="p">abiu@prod-api-01</span><span class="m">:</span><span class="b">~</span><span class="m">$</span> <span id="demoTyped"></span><span class="cursor" aria-hidden="true"></span></div>
-          <div class="ai-card" id="demoAi" aria-live="polite">
+          <div class="ai-card" id="demoAi">
             <div class="ai-head">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>
               识别为白话，已交给 AI 翻译 · claude-sonnet
@@ -396,7 +403,7 @@
 
     <div class="notice reveal">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-      <div>截至 2026-09-05，GitHub Releases 页尚未发布预编译安装包。当前版本 v0.1.0 请按下方步骤从源码构建，需要 Node.js（pnpm）与 Rust 工具链。</div>
+      <div>如果 GitHub Releases 页暂时还没有对应平台的预编译安装包，请按下方步骤从源码构建，需要 Node.js（pnpm）与 Rust 工具链。</div>
     </div>
 
     <div class="steps">
