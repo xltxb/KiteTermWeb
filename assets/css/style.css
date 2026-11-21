@@ -535,6 +535,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 
 /* ---------- Sections ---------- */
 .section { position: relative; padding: 96px 0; }
+@media (max-width: 700px) { .section { padding: 64px 0; } .section-head { margin-bottom: 32px; } .cta-band { padding: 44px 22px; } }
 .section-alt {
   background:
     linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 56px 56px,
@@ -588,7 +589,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .feature:hover::after, .sec-card:hover::after, .arch-box:hover::after, .dl-card:hover::after, .kb:hover::after { opacity: 1; }
 
 /* Feature grid */
-.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; grid-auto-flow: row dense; }
 .feature {
   padding: 26px; border-radius: var(--radius-lg);
   background: var(--surface-glass); border: 1px solid var(--border-subtle);
@@ -616,6 +617,19 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .feature:hover .tag { color: var(--glow-accent); border-color: var(--accent-subtle-border); }
 .feature.wide { grid-column: span 2; }
+/* 宽卡片内的小型示意 */
+.mini-status, .mini-fp {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 18px; padding: 9px 12px;
+  border-radius: 8px; background: var(--term-bg); border: 1px solid var(--border-subtle);
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted);
+}
+.mini-status .ok { color: var(--success); }
+.mini-fp .k { color: var(--glow-accent); font-weight: 600; }
+.mini-fp .fp { color: var(--text-strong); }
+.mini-fp .badge {
+  margin-left: auto; padding: 2px 8px; border-radius: 5px; font-weight: 600;
+  color: var(--success); background: rgba(42, 208, 126, 0.10); border: 1px solid rgba(42, 208, 126, 0.30);
+}
 .feature.accent {
   background:
     radial-gradient(500px 200px at 0% 0%, var(--accent-subtle), transparent 70%),
@@ -624,7 +638,7 @@ ul { margin: 0; padding: 0; list-style: none; }
     var(--surface-glass);
   border-color: var(--accent-subtle-border);
 }
-@media (max-width: 960px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 960px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } .feature.wide-lg { grid-column: auto; } }
 @media (max-width: 600px) { .feature-grid { grid-template-columns: 1fr; } .feature.wide { grid-column: auto; } }
 
 /* Split (AI / security) */
@@ -831,13 +845,18 @@ ul { margin: 0; padding: 0; list-style: none; }
   content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px;
   background: linear-gradient(90deg, transparent, var(--edge-glow), transparent); opacity: .6;
 }
-.footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; align-items: flex-start; }
+.footer-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+.footer-col { display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+.footer-col h4 { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); font-weight: 600; margin-bottom: 4px; }
+.footer-col a { color: var(--text-body); align-self: flex-start; transition: color .2s; }
+.footer-col a:hover { color: var(--glow-accent); text-decoration: none; }
+@media (max-width: 700px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
+  .footer-brand { grid-column: 1 / -1; }
+}
 .footer .brand { font-size: 16px; }
 .footer .brand img { width: 24px; height: 24px; }
 .footer p { margin-top: 10px; font-size: 13.5px; color: var(--text-muted); max-width: 420px; line-height: 1.6; }
-.footer-links { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; }
-.footer-links a { color: var(--text-body); transition: color .2s; }
-.footer-links a:hover { color: var(--glow-accent); }
 .footer-bottom { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--border-subtle); font-size: 12.5px; color: var(--text-faint); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-family: var(--font-mono); }
 
 /* Reveal on scroll */
