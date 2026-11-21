@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://www.kiteterm.com/">
   <meta property="og:image" content="https://www.kiteterm.com/assets/img/icon-512.png">
   <link rel="canonical" href="https://www.kiteterm.com/">
-  <meta name="theme-color" content="#0a0c14">
+  <meta name="theme-color" content="#070a12">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/img/icon-256.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,14 +30,15 @@
       }
       d.setAttribute('data-theme', t);
       var m = document.querySelector('meta[name="theme-color"]');
-      if (m) m.setAttribute('content', t === 'dark' ? '#0a0c14' : '#f6f8fb');
+      if (m) m.setAttribute('content', t === 'dark' ? '#070a12' : '#f4f7fb');
     })();
   </script>
 </head>
 <body>
 
 <!-- ===================== NAV ===================== -->
-<header class="nav">
+<header class="nav" id="siteNav">
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
   <div class="container nav-inner">
     <a class="brand" href="#top" aria-label="KiteTerm 首页">
       <img src="assets/img/icon-128.png" alt="" width="30" height="30">
@@ -72,6 +73,11 @@
 
 <!-- ===================== HERO ===================== -->
 <section class="hero">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="aurora"><i></i><i></i><i></i></div>
+    <canvas class="hero-canvas" id="heroCanvas"></canvas>
+    <div class="hero-grid-lines"></div>
+  </div>
   <div class="container hero-grid">
     <div>
       <span class="eyebrow"><i class="dot"></i> macOS / Windows 桌面端 · v0.1.0 · 源码公开</span>
@@ -95,6 +101,11 @@
     </div>
 
     <!-- 应用窗口模拟:演示「白话 → AI 命令」 -->
+    <div class="mock-wrap">
+      <span class="hud tl" aria-hidden="true"></span><span class="hud tr" aria-hidden="true"></span>
+      <span class="hud bl" aria-hidden="true"></span><span class="hud br" aria-hidden="true"></span>
+      <span class="float-tag ft-1" aria-hidden="true"><i class="dot"></i>E2EE · XChaCha20-Poly1305</span>
+      <span class="float-tag ft-2" aria-hidden="true"><i class="dot ok"></i>known_hosts · 指纹已验证</span>
     <div class="mock" role="img" aria-label="KiteTerm 界面演示：在终端里输入一句白话，AI 将其翻译为命令并等待确认">
       <div class="mock-titlebar">
         <div class="traffic"><i></i><i></i><i></i></div>
@@ -137,6 +148,16 @@
         <span class="ok">● SSH</span><span>10.0.4.21:22</span><span>23 ms</span><span>chacha20-poly1305@openssh.com</span><span>120×36</span><span class="rec">REC 00:42</span>
       </div>
     </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <dl class="stats reveal">
+      <div class="stat"><dt>功能模块</dt><dd><b data-count="10">10</b><sup>+</sup></dd></div>
+      <div class="stat"><dt>遥测上报</dt><dd><b>0</b></dd></div>
+      <div class="stat"><dt>端到端加密密钥</dt><dd><b data-count="256">256</b><sup>bit</sup></dd></div>
+      <div class="stat"><dt>桌面平台</dt><dd><b data-count="2">2</b><sup>macOS · Win</sup></dd></div>
+    </dl>
   </div>
 </section>
 
@@ -144,7 +165,7 @@
 <section class="section" id="features">
   <div class="container">
     <div class="section-head reveal">
-      <div class="kicker">Features · F1–F10</div>
+      <div class="kicker"><span class="idx">01</span><span class="txt">Features · F1–F10</span></div>
       <h2>你日常要开五个工具做的事，这里一个窗口搞定。</h2>
       <p>每一项都不是「计划中」，而是产品需求文档 F1–F10 逐条落地后的现状。</p>
     </div>
@@ -231,7 +252,7 @@
   <div class="container split">
     <div class="reveal">
       <div class="section-head" style="margin-bottom:0">
-        <div class="kicker">AI Assist</div>
+        <div class="kicker"><span class="idx">02</span><span class="txt">AI Assist</span></div>
         <h2>在命令行直接敲白话，回车就变成命令。</h2>
         <p>识别规则偏保守：首词是已知命令、含管道或选项、路径、环境变量赋值一律按命令原样执行；只有确认不是 shell 命令的句子才交给 AI。生成的命令<strong>必须经你确认</strong>才会写入终端。</p>
       </div>
@@ -289,7 +310,7 @@
     </div>
     <div class="reveal">
       <div class="section-head" style="margin-bottom:0">
-        <div class="kicker">Security Model</div>
+        <div class="kicker"><span class="idx">03</span><span class="txt">Security Model</span></div>
         <h2>凭据留在你的设备上，云端只见密文。</h2>
         <p>KiteTerm 不做「先上传再说」。所有需要出设备的数据都先在本地加密，管理平台的角色只是账户中枢与凭据分发者。没有平台放行，登录和云同步就是用不了，这是服务端硬约束而不是客户端自觉。</p>
       </div>
@@ -306,7 +327,7 @@
 <section class="section section-alt" id="architecture">
   <div class="container">
     <div class="section-head center reveal">
-      <div class="kicker">Architecture</div>
+      <div class="kicker"><span class="idx">04</span><span class="txt">Architecture</span></div>
       <h2>两个顶层目录，零代码共享，只靠 HTTP 往来。</h2>
       <p>桌面端与管理平台各自独立构建、独立部署。你可以只用桌面端，也可以把平台部署在自己的机器上。</p>
     </div>
@@ -328,9 +349,9 @@
       </div>
 
       <div class="arch-link" aria-hidden="true">
-        <div class="line"></div>
+        <div class="line"><i class="pkt"></i></div>
         <span class="bubble">HTTP · /api/*</span>
-        <div class="line"></div>
+        <div class="line"><i class="pkt rev"></i></div>
       </div>
 
       <div class="arch-box">
@@ -355,7 +376,7 @@
 <section class="section" id="shortcuts">
   <div class="container">
     <div class="section-head reveal">
-      <div class="kicker">Keyboard</div>
+      <div class="kicker"><span class="idx">05</span><span class="txt">Keyboard</span></div>
       <h2>键盘不离手。</h2>
       <p>与应用「设置 → 快捷键」一致。Windows 上 ⌘ 对应 Ctrl。</p>
     </div>
@@ -377,7 +398,7 @@
 <section class="section section-alt" id="download">
   <div class="container">
     <div class="section-head reveal">
-      <div class="kicker">Download · v0.1.0</div>
+      <div class="kicker"><span class="idx">06</span><span class="txt">Download · v0.1.0</span></div>
       <h2>获取 KiteTerm</h2>
       <p>桌面端支持 macOS 与 Windows。预编译安装包随 GitHub Releases 发布；在此之前可按下面的步骤从源码构建。</p>
     </div>
@@ -411,7 +432,7 @@
         <h3>从源码构建桌面端</h3>
         <p class="sub">在 macOS 上产出 .app / .dmg；在 Windows 上产出 .msi / .nsis，需在对应系统执行。</p>
         <div class="codeblock">
-          <div class="codeblock-head"><span>shell</span><button class="copy-btn" type="button" data-copy="build-desktop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>复制</button></div>
+          <div class="codeblock-head"><span class="cb-title"><span class="traffic" aria-hidden="true"><i></i><i></i><i></i></span>shell</span><button class="copy-btn" type="button" data-copy="build-desktop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>复制</button></div>
 <pre id="build-desktop"><span class="k">git</span> clone https://github.com/xltxb/KiteTerm.git
 <span class="k">cd</span> KiteTerm
 <span class="k">pnpm</span> install:desktop          <span class="c"># 等价于 pnpm -C desktop install</span>
@@ -427,7 +448,7 @@
         <h3>自托管管理平台（可选）</h3>
         <p class="sub">只有需要账户与云同步时才要它。S3 指向任意兼容存储，例如本地 MinIO。</p>
         <div class="codeblock">
-          <div class="codeblock-head"><span>shell</span><button class="copy-btn" type="button" data-copy="build-server"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>复制</button></div>
+          <div class="codeblock-head"><span class="cb-title"><span class="traffic" aria-hidden="true"><i></i><i></i><i></i></span>shell</span><button class="copy-btn" type="button" data-copy="build-server"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>复制</button></div>
 <pre id="build-server"><span class="v">KITE_ADMIN_KEY</span>=&lt;管理密钥&gt; \
 <span class="v">S3_ENDPOINT</span>=http://127.0.0.1:19000 <span class="v">S3_BUCKET</span>=vela-sync \
 <span class="v">S3_ACCESS_KEY</span>=&lt;ak&gt; <span class="v">S3_SECRET_KEY</span>=&lt;sk&gt; \
@@ -448,7 +469,7 @@
 <section class="section" id="faq">
   <div class="container">
     <div class="section-head center reveal">
-      <div class="kicker">FAQ</div>
+      <div class="kicker"><span class="idx">07</span><span class="txt">FAQ</span></div>
       <h2>常见问题</h2>
     </div>
     <div class="faq reveal">
