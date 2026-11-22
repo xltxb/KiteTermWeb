@@ -101,15 +101,15 @@ export function DownloadSection() {
   const current = DOWNLOADS.find((d) => d.id === platform) ?? DOWNLOADS[0]!;
 
   return (
-    <section id="download" className="radial-glow relative px-4 py-24 sm:px-6 md:py-32">
+    <section id="download" className="radial-glow relative px-4 py-12 sm:px-6 md:py-16">
       <SectionHeading
         eyebrow="Download"
         title="获取 KiteTerm"
         description="选择你的系统。安装包发布前，可以按下面两步从源码构建。"
       />
       <Reveal className="mx-auto max-w-3xl">
-        <div className="glow-card p-5 sm:p-8">
-          <div role="tablist" aria-label="选择平台" className="mb-7 inline-flex rounded-xl border border-line bg-space/70 p-1">
+        <div className="glow-card p-5 sm:p-7">
+          <div role="tablist" aria-label="选择平台" className="mb-6 inline-flex rounded-xl border border-line bg-space/70 p-1">
             {DOWNLOADS.map((d) => {
               const Icon = PLATFORM_ICONS[d.id];
               const selected = d.id === platform;

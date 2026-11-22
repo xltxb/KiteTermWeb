@@ -4,7 +4,7 @@ import { BRAND_ICON, NAV_LINKS, REPO_URL } from "../data/kitetermData";
 export function SiteFooter() {
   const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-line px-4 py-12 sm:px-6">
+    <footer className="border-t border-line px-4 py-10 sm:px-6">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
         <div className="max-w-sm">
           <div className="flex items-center gap-2.5 font-semibold text-ink">
@@ -27,7 +27,7 @@ export function SiteFooter() {
           </a>
         </nav>
       </div>
-      <p className="mx-auto mt-10 max-w-6xl text-xs text-ink-faint">© {year} KiteTerm</p>
+      <p className="mx-auto mt-8 max-w-6xl text-xs text-ink-faint">© {year} KiteTerm</p>
     </footer>
   );
 }
