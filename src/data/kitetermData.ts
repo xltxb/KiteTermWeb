@@ -116,7 +116,7 @@ export interface Metric {
 }
 
 export const METRICS: readonly Metric[] = [
-  { value: 10, suffix: " 项", label: "核心功能模块", detail: "终端、主机、SFTP、密钥、转发、监控、同步…" },
+  { value: 10, suffix: " 项", label: "核心功能模块", detail: "终端、SFTP、转发、监控、同步…" },
   { value: 3, suffix: " 种", label: "AI 模型协议", detail: "Anthropic · OpenAI 兼容 · 本地 Ollama" },
   { value: 256, suffix: " 位", label: "端到端加密密钥", detail: "XChaCha20-Poly1305，云端只见密文" },
   { value: 24, suffix: " 词", label: "BIP39 恢复短语", detail: "忘记主密码也能找回同步数据" },

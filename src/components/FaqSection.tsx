@@ -53,9 +53,9 @@ export function FaqSection() {
   // 一次只展开一项；默认展开第一项
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   return (
-    <section id="faq" className="relative px-4 py-24 sm:px-6 md:py-32">
+    <section id="faq" className="relative px-4 py-12 sm:px-6 md:py-16">
       <SectionHeading eyebrow="FAQ" title="常见问题" />
-      <div className="mx-auto max-w-3xl space-y-3">
+      <div className="mx-auto max-w-3xl space-y-2.5">
         {FAQS.map((item, i) => (
           <Reveal key={item.q} delay={i * 60}>
             <FaqEntry item={item} open={openIndex === i} onToggle={() => setOpenIndex(openIndex === i ? null : i)} />

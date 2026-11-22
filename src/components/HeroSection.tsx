@@ -138,8 +138,8 @@ function TerminalPreview() {
 
 export function HeroSection() {
   return (
-    <section id="top" className="radial-glow relative overflow-hidden pt-28 pb-20 md:pt-36 md:pb-28">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+    <section id="top" className="radial-glow relative overflow-hidden pt-24 pb-12 md:pt-28 md:pb-16">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
         <div>
           <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-line-strong bg-white/[0.03] px-3 py-1 text-xs text-ink-muted">
             <span className="h-1.5 w-1.5 rounded-full bg-cyber shadow-[0_0_8px_#00e5ff]" />
@@ -154,7 +154,7 @@ export function HeroSection() {
             多标签会话、可视化 SFTP、端口转发、服务器监控与端到端加密云同步，再加一个懂分寸的 AI 终端助手。
             你日常要开五个工具做的事，这里一个窗口搞定。
           </p>
-          <div className="mt-9 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <a href="#download" className="btn-primary inline-flex h-12 items-center gap-2 rounded-xl px-6 font-medium">
               获取 KiteTerm
               <ArrowRight size={18} aria-hidden="true" />

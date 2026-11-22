@@ -196,14 +196,14 @@ function ForwardCompare() {
 
 export function WorkflowShowcase() {
   return (
-    <section id="workflow" className="relative px-4 py-24 sm:px-6 md:py-32">
+    <section id="workflow" className="relative px-4 py-12 sm:px-6 md:py-16">
       <SectionHeading
         eyebrow="Workflow"
         title="排障与隧道，都在终端里完成"
         description="日志报错时不用切窗口查资料：把失败输出交给 AI，先看根因再动手。要访问内网服务，转发规则一次配置、长期有效。"
       />
       {/* min-w-0:Grid 子项默认按内容最小宽度撑开，右栏表格的 min-width 会把整列连同左栏一起撑出视口 */}
-      <div className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-2 [&>*]:min-w-0">
+      <div className="mx-auto grid max-w-6xl gap-4 lg:grid-cols-2 [&>*]:min-w-0">
         <Reveal>
           <LogTroubleshoot />
         </Reveal>

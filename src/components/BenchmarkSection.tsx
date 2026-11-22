@@ -58,7 +58,7 @@ function Bar({
 function MetricCard({ metric, active }: { metric: BenchmarkMetric; active: boolean }) {
   const max = Math.max(metric.kiteterm, metric.baseline);
   return (
-    <div className="glow-card p-6">
+    <div className="glow-card p-5">
       <div className="mb-5 flex items-start justify-between gap-3">
         <div>
           <h3 className="font-medium text-ink">{metric.label}</h3>
@@ -94,21 +94,21 @@ function MetricCard({ metric, active }: { metric: BenchmarkMetric; active: boole
 export function BenchmarkSection() {
   const [ref, visible] = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
   return (
-    <section id="benchmark" className="relative px-4 py-24 sm:px-6 md:py-32">
+    <section id="benchmark" className="relative px-4 py-12 sm:px-6 md:py-16">
       <SectionHeading
         eyebrow="Benchmark"
         title="原生内核，轻快不占地"
         description="基于 Tauri 与 Rust，界面用系统 WebView，不随包附带整套浏览器 —— 启动、内存与输入响应都更克制。"
       />
       {BENCHMARK_IS_PLACEHOLDER && (
-        <p className="mx-auto mb-8 flex max-w-6xl items-center justify-center gap-2 text-center text-xs text-warn">
+        <p className="mx-auto mb-6 flex max-w-6xl items-center justify-center gap-2 text-center text-xs text-warn">
           <FlaskConical size={14} aria-hidden="true" />
           以下为示意数据，尚未实测；正式数据以发布时的基准测试为准。
         </p>
       )}
       <div
         ref={ref}
-        className={`reveal mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4 ${visible ? "is-visible" : ""}`}
+        className={`reveal mx-auto grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4 ${visible ? "is-visible" : ""}`}
       >
         {BENCHMARKS.map((m) => (
           <MetricCard key={m.id} metric={m} active={visible} />
