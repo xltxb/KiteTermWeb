@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Download, Github, Menu, X } from "lucide-react";
-import { NAV_LINKS, REPO_URL } from "../data/kitetermData";
+import { BRAND_ICON, NAV_LINKS, REPO_URL } from "../data/kitetermData";
 
 /** 顶部导航：滚动后加深背景；小屏折叠成菜单 */
 export function SiteHeader() {
@@ -32,7 +32,7 @@ export function SiteHeader() {
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6" aria-label="主导航">
         <a href="#top" className="flex items-center gap-2.5 font-semibold text-ink">
-          <img src="/img/icon-128.png" alt="" width={28} height={28} className="rounded-md" />
+          <img src={BRAND_ICON} alt="" width={28} height={28} className="rounded-md" />
           <span className="tracking-tight">KiteTerm</span>
         </a>
 

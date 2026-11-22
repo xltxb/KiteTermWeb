@@ -16,6 +16,9 @@ import {
 } from "lucide-react";
 
 export const REPO_URL = "https://github.com/xltxb/KiteTerm";
+
+/** public/ 下资源的地址。要带上 BASE_URL,站点放在子路径下时才找得到(见 vite.config.ts) */
+export const BRAND_ICON = `${import.meta.env.BASE_URL}img/icon-128.png`;
 export const RELEASES_URL = `${REPO_URL}/releases`;
 
 /** 已发布安装包时改为 true，下载按钮会去掉「尚未发布」提示 */
