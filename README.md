@@ -7,7 +7,7 @@
 ```
 index.html                         Vite 入口
 public/                            原样复制到产物根目录
-  CNAME                            自定义域名 www.kiteterm.com
+  CNAME                            记录自定义域名(Actions 部署时 GitHub 不读它,见下文「部署」)
   img/                             品牌图标(取自 KiteTerm 仓库 desktop/src-tauri/icons/)
 src/
   data/kitetermData.ts             全部文案与数据:指标、Bento 卡片、性能基准、下载命令、FAQ
@@ -40,9 +40,16 @@ pnpm preview      # 预览构建产物
 
 ## 部署
 
-`.github/workflows/deploy.yml` 在推送到 main 时构建并发布到 GitHub Pages。
-**首次启用**:仓库 Settings → Pages → Source 改为「GitHub Actions」(原先是直接发布分支根目录,
-那种方式在改为 Vite 之后不再可用)。
+`.github/workflows/deploy.yml` 在推送到 main 时构建并发布到 GitHub Pages。仓库 Settings → Pages 需要:
+
+- **Source**:「GitHub Actions」。原先的「从分支直接发布」会把未构建的源码发上去,页面会是空白。
+- **Custom domain**:`www.kiteterm.com`。**用 Actions 部署时 GitHub 会忽略 `CNAME` 文件**,
+  域名只认这里的设置;它为空时访问域名会得到 GitHub 的 404「There isn't a GitHub Pages site here」。
+- **Enforce HTTPS**:勾选。证书由 GitHub 签发,要求域名 DNS 直接指向 GitHub ——
+  Cloudflare 上 `www` 的 CNAME 指向 `xltxb.github.io` 且设为「仅 DNS」;开着代理时 GitHub 签不了证书。
+
+构建用相对路径(`vite.config.ts` 的 `base: "./"`),所以没有自定义域名时,在
+`xltxb.github.io/KiteTermWeb/` 子路径下同样能正常打开。
 
 ## 维护提示
 

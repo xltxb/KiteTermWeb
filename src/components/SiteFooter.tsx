@@ -1,5 +1,5 @@
 import { Github } from "lucide-react";
-import { NAV_LINKS, REPO_URL } from "../data/kitetermData";
+import { BRAND_ICON, NAV_LINKS, REPO_URL } from "../data/kitetermData";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -8,7 +8,7 @@ export function SiteFooter() {
       <div className="mx-auto flex max-w-6xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
         <div className="max-w-sm">
           <div className="flex items-center gap-2.5 font-semibold text-ink">
-            <img src="/img/icon-128.png" alt="" width={24} height={24} className="rounded-md" />
+            <img src={BRAND_ICON} alt="" width={24} height={24} className="rounded-md" />
             KiteTerm
           </div>
           <p className="mt-3 text-sm leading-relaxed text-ink-faint">
